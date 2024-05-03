@@ -46,4 +46,4 @@ while ($choice != 0) {
     }
 }
 
-php>
+?>
