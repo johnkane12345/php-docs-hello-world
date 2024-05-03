@@ -83,4 +83,8 @@ class GraphHelper
     
         GraphHelper::$userClient->me()->sendMail()->post($sendMailBody)->wait();
     }
+
+    public static function makeGraphCall(): void {
+        // INSERT YOUR CODE HERE
+    }
 ?>
