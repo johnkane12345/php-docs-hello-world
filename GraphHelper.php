@@ -38,6 +38,13 @@ class GraphHelper
     return GraphHelper::$tokenProvider
         ->getAuthorizationTokenAsync('https://graph.microsoft.com')->wait();
     }
+
+    public static function getUser(): Models\User {
+        $configuration = new UserItemRequestBuilderGetRequestConfiguration();
+        $configuration->queryParameters = new UserItemRequestBuilderGetQueryParameters();
+        $configuration->queryParameters->select = ['displayName','mail','userPrincipalName'];
+        return GraphHelper::$userClient->me()->get($configuration)->wait();
+    }
 }
 
 ?>
