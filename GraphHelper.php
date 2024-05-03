@@ -63,4 +63,24 @@ class GraphHelper
             ->get($configuration)->wait();
     }
 
+    public static function sendMail(string $subject, string $body, string $recipient): void {
+        $message = new Models\Message();
+        $message->setSubject($subject);
+    
+        $itemBody = new Models\ItemBody();
+        $itemBody->setContent($body);
+        $itemBody->setContentType(new Models\BodyType(Models\BodyType::TEXT));
+        $message->setBody($itemBody);
+    
+        $email = new Models\EmailAddress();
+        $email->setAddress($recipient);
+        $to = new Models\Recipient();
+        $to->setEmailAddress($email);
+        $message->setToRecipients([$to]);
+    
+        $sendMailBody = new SendMailPostRequestBody();
+        $sendMailBody->setMessage($message);
+    
+        GraphHelper::$userClient->me()->sendMail()->post($sendMailBody)->wait();
+    }
 ?>
