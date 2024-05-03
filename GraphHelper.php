@@ -47,4 +47,20 @@ class GraphHelper
     }
 }
 
+    public static function getInbox(): Models\MessageCollectionResponse {
+        $configuration = new MessagesRequestBuilderGetRequestConfiguration();
+        $configuration->queryParameters = new MessagesRequestBuilderGetQueryParameters();
+        // Only request specific properties
+        $configuration->queryParameters->select = ['from','isRead','receivedDateTime','subject'];
+        // Sort by received time, newest first
+        $configuration->queryParameters->orderby = ['receivedDateTime DESC'];
+        // Get at most 25 results
+        $configuration->queryParameters->top = 25;
+        return GraphHelper::$userClient->me()
+            ->mailFolders()
+            ->byMailFolderId('inbox')
+            ->messages()
+            ->get($configuration)->wait();
+    }
+
 ?>
