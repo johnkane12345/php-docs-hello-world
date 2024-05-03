@@ -94,10 +94,31 @@ function listInbox(): void {
 }
 
 function sendMail(): void {
-    // TODO
+    try {
+        // Send mail to the signed-in user
+        // Get the user for their email address
+        $user = GraphHelper::getUser();
+
+        // For Work/school accounts, email is in Mail property
+        // Personal accounts, email is in UserPrincipalName
+        $email = $user->getMail();
+        if (empty($email)) {
+            $email = $user->getUserPrincipalName();
+        }
+
+        GraphHelper::sendMail('Testing Microsoft Graph', 'Hello world!', $email);
+
+        print(PHP_EOL.'Mail sent.'.PHP_EOL.PHP_EOL);
+    } catch (Exception $e) {
+        print('Error sending mail: '.$e->getMessage().PHP_EOL.PHP_EOL);
+    }
 }
 
 function makeGraphCall(): void {
-    // TODO
+    try {
+        GraphHelper::makeGraphCall();
+    } catch (Exception $e) {
+        print(PHP_EOL.'Error making Graph call'.PHP_EOL.PHP_EOL);
+    }
 }
 ?>
