@@ -11,7 +11,9 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 $dotenv->required(['CLIENT_ID', 'TENANT_ID', 'GRAPH_USER_SCOPES']);
 
-initializeGraph();
+function initializeGraph(): void {
+    GraphHelper::initializeGraphForUserAuth();
+}
 
 greetUser();
 
