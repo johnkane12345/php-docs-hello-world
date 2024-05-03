@@ -12,27 +12,32 @@ use Microsoft\Kiota\Abstractions\Authentication\BaseBearerTokenAuthenticationPro
 
 require_once 'DeviceCodeTokenProvider.php';
 
-class GraphHelper {
+class GraphHelper 
+{
+    private static string $clientId = '';
+    private static string $tenantId = '';
+    private static string $graphUserScopes = '';
+    private static DeviceCodeTokenProvider $tokenProvider;
+    private static GraphServiceClient $userClient;
 
-private static string $clientId = '';
-private static string $tenantId = '';
-private static string $graphUserScopes = '';
-private static DeviceCodeTokenProvider $tokenProvider;
-private static GraphServiceClient $userClient;
+    public static function initializeGraphForUserAuth(): void {
+        GraphHelper::$clientId = $_ENV['CLIENT_ID'];
+        GraphHelper::$tenantId = $_ENV['TENANT_ID'];
+        GraphHelper::$graphUserScopes = $_ENV['GRAPH_USER_SCOPES'];
+    
+        GraphHelper::$tokenProvider = new DeviceCodeTokenProvider(
+            GraphHelper::$clientId,
+            GraphHelper::$tenantId,
+            GraphHelper::$graphUserScopes);
+        $authProvider = new BaseBearerTokenAuthenticationProvider(GraphHelper::$tokenProvider);
+        $adapter = new GraphRequestAdapter($authProvider);
+        GraphHelper::$userClient = GraphServiceClient::createWithRequestAdapter($adapter);
+    }
 
-public static function initializeGraphForUserAuth(): void {
-    GraphHelper::$clientId = $_ENV['CLIENT_ID'];
-    GraphHelper::$tenantId = $_ENV['TENANT_ID'];
-    GraphHelper::$graphUserScopes = $_ENV['GRAPH_USER_SCOPES'];
-
-    GraphHelper::$tokenProvider = new DeviceCodeTokenProvider(
-        GraphHelper::$clientId,
-        GraphHelper::$tenantId,
-        GraphHelper::$graphUserScopes);
-    $authProvider = new BaseBearerTokenAuthenticationProvider(GraphHelper::$tokenProvider);
-    $adapter = new GraphRequestAdapter($authProvider);
-    GraphHelper::$userClient = GraphServiceClient::createWithRequestAdapter($adapter);
-}
+    public static function getUserToken(): string {
+    return GraphHelper::$tokenProvider
+        ->getAuthorizationTokenAsync('https://graph.microsoft.com')->wait();
+    }
 }
 
 ?>
